@@ -14,13 +14,14 @@
   * dimensions
   * destroy() // prototype method -> returns the string: 'Object was removed from the game.'
 */
-function GameObject(gameAttr) {
-  this.createdAt = gameAttr.createdAt;
-  this.dimensions = gameAttr.dimensions;
-  this.destroy = () => {
-    "Object was removed from game";
-  };
+function GameObject(objectAttr) {
+  this.createdAt = objectAttr.createdAt;
+  this.dimensions = objectAttr.dimensions;
 }
+
+GameObject.prototype.destroy = function() {
+  return `${this.name} was removed from the game`;
+};
 
 /*
   === CharacterStats ===
@@ -29,15 +30,17 @@ function GameObject(gameAttr) {
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
-
 function CharacterStats(charAttr) {
+  GameObject.call(this, charAttr);
   this.hp = charAttr.hp;
   this.name = charAttr.name;
-  this.takeDamage = () => {
-    `${this.name} took damage`;
-  };
 }
 
+CharacterStats.prototype = Object.create(GameObject.prototype);
+
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage`;
+};
 /*
   === Humanoid ===
   * faction
@@ -47,16 +50,18 @@ function CharacterStats(charAttr) {
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
-
-function Humanoid(humAttr) {
-  this.faction = humAttr.faction;
-  this.weapons = humAttr.weapons;
-  this.language = humAttr.language;
-  this.greet = () => {
-    `${this.name} offers a greeting in ${this.language}`;
-  };
+function Humanoid(humanoidAttr) {
+  CharacterStats.call(this, humanoidAttr);
+  this.faction = humanoidAttr.faction;
+  this.weapons = humanoidAttr.weapons;
+  this.language = humanoidAttr.language;
 }
 
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}`;
+};
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
